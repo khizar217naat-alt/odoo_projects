@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="custom_login_page" inherit_id="web.login">
+        <xpath expr="//button[@type='submit' and contains(@class, 'btn-primary')]" position="after">
+            <div class="text-center mt-2">
+                <a t-att-href="'/portal/reset_password'">Forgot your password?</a>
+            </div>
+        </xpath>
+    </template>
+</odoo>
