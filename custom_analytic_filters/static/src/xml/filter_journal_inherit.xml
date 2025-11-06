@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="custom_analytic_filters.AccountReportFilterJournalInherit"
+       t-inherit="account_reports.AccountReportFilterJournal"
+       t-inherit-mode="extension">
+
+        <xpath expr="//Dropdown" position="after">
+            <div class="d-inline-block ms-2" t-if="env.services.user.userId">
+                <Dropdown>
+                    <button class="btn btn-secondary dropdown-toggle" type="button">
+                        <i class="fa fa-shopping-cart me-1"/>
+                        Purchase Order
+                        <t t-if="report.options.purchase_orders &amp;&amp; report.options.purchase_orders.find(p =&gt; p.selected)">
+                            <span class="badge bg-primary ms-1">✓</span>
+                        </t>
+                    </button>
+
+                    <t t-set-slot="content">
+                        <t t-if="report.isLoadingPO">
+                            <div class="dropdown-item text-muted">
+                                <i class="fa fa-spinner fa-spin me-2"/>Loading...
+                            </div>
+                        </t>
+                        <t t-elif="report.options.purchase_orders &amp;&amp; report.options.purchase_orders.length">
+                            <DropdownItem
+                                onSelected="() => report.selectPurchaseOrder(null)"
+                                closingMode="'none'"
+                                class="'selected': !report.selectedPurchaseOrderId">
+                                Clear Filter
+                            </DropdownItem>
+                            <li><hr class="dropdown-divider"/></li>
+                            <t t-foreach="report.options.purchase_orders" t-as="po" t-key="po.id">
+                                <DropdownItem
+                                    class="{'selected': po.selected}"
+                                    onSelected="() => report.selectPurchaseOrder(po)"
+                                    closingMode="'none'">
+                                    <t t-esc="po.name"/>
+                                    <t t-if="po.analytic_account_name">
+                                        <small class="text-muted"> - <t t-esc="po.analytic_account_name"/></small>
+                                    </t>
+                                </DropdownItem>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="dropdown-item text-muted">No Purchase Orders Found</div>
+                        </t>
+                    </t>
+                </Dropdown>
+            </div>
+        </xpath>
+    </t>
+</templates>
