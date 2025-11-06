@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Minimal view that doesn't reference any new fields -->
+        <record id="view_move_line_tree_net_quantity" model="ir.ui.view">
+            <field name="name">stock.move.line.tree.net.quantity</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <!-- Just modify the string of an existing field to make the view valid -->
+                <field name="quantity" position="attributes">
+                    <attribute name="string">Qty (Individual)</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
