@@ -1,0 +1,148 @@
+<odoo>
+    <template id="peptidat_invoice_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+
+                    <div class="page">
+
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between"
+                             style="margin-bottom: 15px; align-items: flex-start; border-bottom: 3px solid #ccc;">
+                            <!-- Partner Info -->
+                            <div style="margin: 0 20px;">
+                                <h3 style="color: #333; font-size: 26px; font-weight: bold; margin: 0 0 10px 0;">
+                                    <t t-esc="o.partner_id.name"/>
+                                </h3>
+                                <div style="color: #333; font-size: 18px; line-height: 1.4;">
+                                    <div t-if="o.partner_id.street"><t t-esc="o.partner_id.street"/></div>
+                                    <div t-if="o.partner_id.city"><t t-esc="o.partner_id.city"/></div>
+                                    <div t-if="o.partner_id.phone"><t t-esc="o.partner_id.phone"/></div>
+                                    <div t-if="o.partner_id.email"><t t-esc="o.partner_id.email"/></div>
+                                </div>
+                            </div>
+
+                            <!-- Order Info -->
+                            <div style="padding: 15px; text-align: right; margin: 0 20px;">
+                                <h1 style="color: #1765AB; font-size: 38px; margin: 0 0 7px 0;">
+                                    <t>ORDER</t>
+                                </h1>
+                                <h1 style="color: #1765AB; font-size: 38px; margin: 0 0 7px 0;">
+                                    #<t t-esc="o.name.split('/')[-1]"/>
+                                </h1>
+                                <div style="color: #333; font-size: 16px;">
+                                    <strong><t>Date</t></strong>:
+                                    <t t-set="doc_date" t-value="o.invoice_date or o.invoice_date_due or o.create_date"/>
+                                    <t t-if="doc_date">
+                                        <span t-esc="doc_date.strftime('%d/%m/%Y')"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Table -->
+                        <table class="table table-borderless"
+                               style="width: 100%; border-collapse: collapse; margin-bottom: 50px;">
+                            <thead>
+                                <tr style="background-color: #1765AB;">
+                                    <th style="padding:12px 8px; text-align:center; font-size:20px; color:white;"><strong>NO</strong></th>
+                                    <th style="padding:12px 8px; text-align:left; font-size:20px; color:white;"><strong>PRODUCT</strong></th>
+                                    <th style="padding:12px 8px; text-align:center; font-size:20px; color:white;"><strong>PRICE</strong></th>
+                                    <th style="padding:12px 8px; text-align:center; font-size:20px; color:white;"><strong>QTY</strong></th>
+                                    <th style="padding:12px 8px; text-align:center; font-size:20px; color:white;"><strong>TOTAL</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="range(11)" t-as="i">
+                                    <tr t-att-style="'background-color:#f9f9f9;' if i % 2 == 0 else 'background-color:#ffffff;'">
+
+                                        <!-- Serial -->
+                                        <td style="text-align:center; font-size:18px; height:28px;">
+                                            <t t-if="i &lt; len(o.invoice_line_ids)">
+                                                <t t-esc="i+1"/>
+                                            </t>
+                                        </td>
+
+                                        <!-- Product -->
+                                        <td style="font-size:18px; height:28px;">
+                                            <t t-if="i &lt; len(o.invoice_line_ids)">
+                                                <t t-esc="o.invoice_line_ids[i].product_id.name"/>
+                                            </t>
+                                        </td>
+
+                                        <!-- Price -->
+                                        <td style="text-align:center; font-size:18px; height:28px;">
+                                            <t t-if="i &lt; len(o.invoice_line_ids)">
+                                                <span t-field="o.invoice_line_ids[i].price_unit"
+                                                      t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                            </t>
+                                        </td>
+
+                                        <!-- Quantity -->
+                                        <td style="text-align:center; font-size:18px; height:28px;">
+                                            <t t-if="i &lt; len(o.invoice_line_ids)">
+                                                <span t-field="o.invoice_line_ids[i].quantity" t-options='{"widget":"float"}'/>
+                                            </t>
+                                        </td>
+
+                                        <!-- Subtotal -->
+                                        <td style="text-align:center; font-size:18px; height:28px;">
+                                            <t t-if="i &lt; len(o.invoice_line_ids)">
+                                                <span t-field="o.invoice_line_ids[i].price_subtotal"
+                                                      t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                            </t>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Totals -->
+                        <div style="margin-bottom:20px; text-align:right;">
+                            <div style="display:inline-block; width:40%;">
+                                <div class="d-flex justify-content-between" style="font-size:20px;">
+                                    <div><t>Untaxed Amount</t></div>
+                                    <div><span t-field="o.amount_untaxed" t-options='{"widget":"monetary","display_currency":o.currency_id}'/></div>
+                                </div>
+                                <div class="d-flex justify-content-between" style="font-size:22px;">
+                                    <div><t>TAX</t></div>
+                                    <div><span t-field="o.amount_tax" t-options='{"widget":"monetary","display_currency":o.currency_id}'/></div>
+                                </div>
+                                <div class="d-flex justify-content-between" style="border-top:1px solid #ccc; font-size:24px; font-weight:bold;">
+                                    <div><t>Total</t></div>
+                                    <div><span t-field="o.amount_total" t-options='{"widget":"monetary","display_currency":o.currency_id}'/></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div style="border-top:2px solid #ccc; padding-top:10px; margin-bottom:5px; text-align:inherit;">
+                            <span style="color:#1765AB; font-size:20px; font-weight:bold;">
+                                <t>Notes</t>
+                            </span>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Paperformat -->
+    <record id="paperformat_peptidat_invoice" model="report.paperformat">
+        <field name="name">Peptidat Invoice Format</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">200</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">5</field>
+        <field name="dpi">90</field>
+    </record>
+</odoo>
