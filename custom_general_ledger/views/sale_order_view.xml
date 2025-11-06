@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_order_form_inherit_vendor" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.vendor</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert inside "Other Info" tab -->
+            <xpath expr="//page[@name='other_information']/group/group[@name='sales_person']" position="after">
+                <group string="Vendor Information">
+                    <field name="vendor_id" domain="[('supplier_rank','>',0)]"
+                           readonly="state in ['sale','done','cancel']"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
